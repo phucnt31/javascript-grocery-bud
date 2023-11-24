@@ -16,8 +16,11 @@ let editID = "";
 
 // submit form
 form.addEventListener("submit", addItem);
+// clear items
+clearBtn.addEventListener("click", clearItems);
 
 // ****** FUNCTIONS **********
+// add function
 function addItem(e) {
   e.preventDefault();
   const value = grocery.value;
@@ -40,6 +43,12 @@ function addItem(e) {
                 <i class="fas fa-trash"></i>
             </button>
         </div>`;
+    // delete item
+    const deleteBtn = element.querySelector(".delete-btn");
+    deleteBtn.addEventListener("click", deleteItem);
+    // edit item
+    const editBtn = element.querySelector(".edit-btn");
+    editBtn.addEventListener("click", editItem);
 
     // append child
     list.appendChild(element);
@@ -53,10 +62,54 @@ function addItem(e) {
     // set back to default
     setBackToDefault();
   } else if (value && editFlag) {
-    console.log("edit");
+    editElement.innerHTML = value;
+    displayAlert("value changed", "success");
+    // edit local storage
+    editLocalStorage(editID, value);
+    setBackToDefault();
   } else {
     displayAlert("please enter value", "danger");
   }
+}
+
+// edit function
+function editItem(e) {
+  const element = e.currentTarget.parentElement.parentElement;
+  // set edit item
+  editElement = e.currentTarget.parentElement.previousElementSibling;
+  //   set form value
+  grocery.value = editElement.innerHTML;
+  editFlag = true;
+  editID = element.dataset.id;
+  submitBtn.textContent = "edit";
+}
+
+// delete function
+function deleteItem(e) {
+  const element = e.currentTarget.parentElement.parentElement;
+  const id = element.dataset.id;
+  list.removeChild(element);
+  if (list.children.length === 0) {
+    container.classList.remove("show-container");
+  }
+  displayAlert("item removed", "danger");
+  setBackToDefault();
+  // remove from local storage
+  // removeFromLocalStorage(id)
+}
+
+// clear items
+function clearItems() {
+  const items = document.querySelectorAll(".grocery-item");
+  if (items.length > 0) {
+    items.forEach(function (item) {
+      list.removeChild(item);
+    });
+  }
+  container.classList.remove("show-container");
+  displayAlert("empty list", "danger");
+  setBackToDefault();
+  // localStorage.removeItem('list')
 }
 
 // display alert
@@ -84,4 +137,7 @@ function addToLocalStorage(id, value) {
   console.log("add to local");
 }
 
+function removeFromLocalStorage(id) {}
+
+function editLocalStorage(id, value) {}
 // ****** SETUP ITEMS **********
